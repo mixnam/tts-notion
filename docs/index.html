@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Notion tts widget</title>
+    <meta charset="UTF-8" />
+  </head>
+
+  <body>
+    <h3>tts test</h3>
+	<button onclick="speak()">Play</button>
+    <script>
+        function speak() {
+            const params = new URLSearchParams(location.search);
+            const text = params.get('text')
+            if (!text) {
+                alert('no text param in URL')
+                return
+            }
+            const lang = params.get('lang')
+            if (!lang) {
+                alert('no voice param in URL')
+                return
+            }
+
+            const voices = speechSynthesis.getVoices()
+            if (voices.length === 0) {
+                speechSynthesis.onvoiceschanged = () => {
+                    speakUtterance(text, getVoice(lang))
+                }
+                return
+            }
+
+            speakUtterance(text, getVoice(lang))
+        }
+
+        function speakUtterance(text, voice) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 0.8;
+            utterance.voice = voice;
+            speechSynthesis.speak(utterance)
+        }
+
+        function getVoice(lang) {
+            const voices = speechSynthesis.getVoices()
+            const voice = voices.find(voice => voice.lang === lang);
+            return voice
+        }
+    </script>
+  </body>
+</html>
