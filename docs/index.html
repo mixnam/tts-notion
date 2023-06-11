@@ -3,11 +3,44 @@
   <head>
     <title>Notion tts widget</title>
     <meta charset="UTF-8" />
+<style>
+    body {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    .play {
+        height: 30vh;
+        position: relative;
+        width: 50vw;
+        border-radius: 10vh;
+        font-size: 50px;
+        color: lightyellow;
+        background: linear-gradient(45deg, rgb(172 236 117) 17%, rgba(0,226,255,1) 100%);
+        border: 1px solid;
+        box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+    }
+
+    .play.pressed::after{
+        display: block;
+        position: absolute;
+        top:0;
+        left:0;
+        content: '';
+        height: 30vh;
+        width: 50vw;
+        border-radius: 10vh;
+        background: black;
+        opacity: 0.2;
+    }
+</style>
   </head>
 
   <body>
-    <h3>tts test</h3>
-	<button onclick="speak()">Play</button>
+    <button id="button.play" class="play pressed" onclick="speak()">Play</button>
     <script>
         function speak() {
             const params = new URLSearchParams(location.search);
@@ -34,10 +67,19 @@
         }
 
         function speakUtterance(text, voice) {
+            const button = document.getElementById('button.play');
+
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.rate = 0.8;
             utterance.voice = voice;
+            utterance.onstart = () => {
+                button.classList.add('pressed')
+            }
+            utterance.onend = () => {
+                button.classList.remove('pressed')
+            }
             speechSynthesis.speak(utterance)
+
         }
 
         function getVoice(lang) {
